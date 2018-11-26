@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  client:
+    build: ./client
+    environment:
+      - REACT_APP_PORT=${REACT_APP_PORT}
+    expose:
+      - ${REACT_APP_PORT}
+    # ports:
+    #   - ${REACT_APP_PORT}:${REACT_APP_PORT}
+    #   - 35729:35729
+    volumes:
+      - ./client/src:/river/src
+      - ./client/public:/river/public
+    links:
+      - server
+  server:
+    build: ./server
+    expose:
+      - ${APP_SERVER_PORT}
+    environment:
+      - API_HOST=${API_HOST}
+      - APP_SERVER_PORT=${APP_SERVER_PORT}
+    # ports:
+    #   - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+  nginx:
+    build: ./nginx
+    depends_on:
+      - server
+      - client
+    ports:
+      - 80:80
